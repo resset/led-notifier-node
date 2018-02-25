@@ -2,26 +2,73 @@
 #include "ch.h"
 
 /*
- * Thread 1.
+ * Maximum speed SPI configuration (16MHz, CPHA=0, CPOL=0, MSb first).
  */
-THD_WORKING_AREA(waThread1, 128);
-THD_FUNCTION(Thread1, arg) {
+static const SPIConfig hs_spicfg = {
+  false,
+  NULL,
+  GPIOB,
+  12,
+  0,
+  0
+};
+
+/*
+ * Low speed SPI configuration (250kHz, CPHA=0, CPOL=0, MSb first).
+ */
+static const SPIConfig ls_spicfg = {
+  false,
+  NULL,
+  GPIOB,
+  12,
+  SPI_CR1_BR_2 | SPI_CR1_BR_1,
+  0
+};
+
+/*
+ * SPI TX and RX buffers.
+ */
+static uint8_t txbuf[4];
+static uint8_t rxbuf[4];
+
+/*
+ * SPI thread.
+ */
+THD_WORKING_AREA(waThread2, 128);
+THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
 
+  /*
+   * SPI1 I/O pins setup.
+   */
+  palSetPadMode(GPIOB, 3, PAL_MODE_ALTERNATE(0) |
+                          PAL_STM32_OSPEED_HIGHEST);       /* SCK.*/
+  palSetPadMode(GPIOB, 4, PAL_MODE_ALTERNATE(0) |
+                          PAL_STM32_OSPEED_HIGHEST);       /* MISO.*/
+  palSetPadMode(GPIOB, 5, PAL_MODE_ALTERNATE(0) |
+                          PAL_STM32_OSPEED_HIGHEST);       /* MOSI.*/
+  palSetPadMode(GPIOA, 4, PAL_MODE_ALTERNATE(0) |
+                          PAL_STM32_OSPEED_HIGHEST);       /* CSN.*/
+
   while (true) {
-    palSetPad(GPIOB, GPIOB_LED_GREEN);
-    chThdSleepMilliseconds(500);
-    palClearPad(GPIOB, GPIOB_LED_GREEN);
-    chThdSleepMilliseconds(500);
+    spiAcquireBus(&SPID1);              /* Acquire ownership of the bus.    */
+    spiStart(&SPID1, &ls_spicfg);       /* Setup transfer parameters.       */
+    spiSelect(&SPID1);                  /* Slave Select assertion.          */
+    spiExchange(&SPID1, 4,
+                txbuf, rxbuf);          /* Atomic transfer operations.      */
+    spiUnselect(&SPID1);                /* Slave Select de-assertion.       */
+    spiReleaseBus(&SPID1);              /* Ownership release.               */
+
+    chThdSleepMilliseconds(2000);
   }
 }
 
 /*
- * UART thread 2.
+ * UART thread.
  */
-THD_WORKING_AREA(waThread2, 128);
-THD_FUNCTION(Thread2, arg) {
+THD_WORKING_AREA(waThread3, 128);
+THD_FUNCTION(Thread3, arg) {
 
   (void)arg;
 
@@ -43,8 +90,8 @@ THD_FUNCTION(Thread2, arg) {
  * match NIL_CFG_NUM_THREADS.
  */
 THD_TABLE_BEGIN
-  THD_TABLE_ENTRY(waThread1, "blinker", Thread1, NULL)
-  THD_TABLE_ENTRY(waThread2, "hello", Thread2, NULL)
+  THD_TABLE_ENTRY(waThread2, "spi", Thread2, NULL)
+  THD_TABLE_ENTRY(waThread3, "serial", Thread3, NULL)
 THD_TABLE_END
 
 int main(void) {

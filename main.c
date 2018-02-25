@@ -7,8 +7,8 @@
 static const SPIConfig hs_spicfg = {
   false,
   NULL,
-  GPIOB,
-  12,
+  GPIOA,
+  4,
   0,
   0
 };
@@ -19,8 +19,8 @@ static const SPIConfig hs_spicfg = {
 static const SPIConfig ls_spicfg = {
   false,
   NULL,
-  GPIOB,
-  12,
+  GPIOA,
+  4,
   SPI_CR1_BR_2 | SPI_CR1_BR_1,
   0
 };

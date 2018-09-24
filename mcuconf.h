@@ -46,6 +46,7 @@
 #define STM32_HSE_ENABLED                   FALSE
 #define STM32_LSE_ENABLED                   FALSE
 #define STM32_ADC_CLOCK_ENABLED             TRUE
+#define STM32_USB_CLOCK_ENABLED             TRUE
 #define STM32_MSIRANGE                      STM32_MSIRANGE_2M
 #define STM32_SW                            STM32_SW_PLL
 #define STM32_PLLSRC                        STM32_PLLSRC_HSI16
@@ -91,6 +92,8 @@
 #define STM32_GPT_TIM2_IRQ_PRIORITY         2
 #define STM32_GPT_USE_TIM21                 FALSE
 #define STM32_GPT_TIM21_IRQ_PRIORITY        2
+#define STM32_GPT_USE_TIM22                 FALSE
+#define STM32_GPT_TIM22_IRQ_PRIORITY        2
 
 /*
  * I2C driver system settings.
@@ -116,6 +119,8 @@
 #define STM32_ICU_TIM2_IRQ_PRIORITY         3
 #define STM32_ICU_USE_TIM21                 FALSE
 #define STM32_ICU_TIM21_IRQ_PRIORITY        3
+#define STM32_ICU_USE_TIM22                 FALSE
+#define STM32_ICU_TIM22_IRQ_PRIORITY        3
 
 /*
  * PWM driver system settings.
@@ -125,6 +130,8 @@
 #define STM32_PWM_TIM2_IRQ_PRIORITY         3
 #define STM32_PWM_USE_TIM21                 FALSE
 #define STM32_PWM_TIM21_IRQ_PRIORITY        3
+#define STM32_PWM_USE_TIM22                 FALSE
+#define STM32_PWM_TIM22_IRQ_PRIORITY        3
 
 /*
  * SERIAL driver system settings.

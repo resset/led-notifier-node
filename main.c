@@ -84,21 +84,15 @@ THD_FUNCTION(Thread3, arg) {
   }
 }
 
-
-/*
- * Threads static table, one entry per thread. The number of entries must
- * match NIL_CFG_NUM_THREADS.
- */
-THD_TABLE_BEGIN
-  THD_TABLE_ENTRY(waThread2, "spi", Thread2, NULL)
-  THD_TABLE_ENTRY(waThread3, "serial", Thread3, NULL)
-THD_TABLE_END
-
 int main(void) {
 
   halInit();
   chSysInit();
 
+  chThdCreateStatic(waThread2, sizeof(waThread2), NORMALPRIO, Thread2, NULL);
+  chThdCreateStatic(waThread3, sizeof(waThread3), NORMALPRIO, Thread3, NULL);
+
   while (true) {
+    chThdSleepMilliseconds(500);
   }
 }

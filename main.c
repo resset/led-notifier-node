@@ -39,6 +39,22 @@ THD_FUNCTION(Thread2, arg) {
 
   (void)arg;
 
+
+  /*
+   * nRF (L031, L432):
+   * CE   D9  PA8
+   * CSN  D10 PA11
+   * SCK  D13 PB3
+   * MOSI D11 PB5
+   * MISO D12 PB4
+   * IRQ  D6  PB1
+   *
+   * ESP (L432):
+   * TXD0 D0 PA10
+   * RXD0 D1 PA9
+   * EN   D3 PB0
+   */
+
   /*
    * SPI1 I/O pins setup.
    */
@@ -48,7 +64,7 @@ THD_FUNCTION(Thread2, arg) {
                           PAL_STM32_OSPEED_HIGHEST);       /* MISO.*/
   palSetPadMode(GPIOB, 5, PAL_MODE_ALTERNATE(0) |
                           PAL_STM32_OSPEED_HIGHEST);       /* MOSI.*/
-  palSetPadMode(GPIOA, 4, PAL_MODE_ALTERNATE(0) |
+  palSetPadMode(GPIOD, 10, PAL_MODE_ALTERNATE(0) |
                           PAL_STM32_OSPEED_HIGHEST);       /* CSN.*/
 
   while (true) {
